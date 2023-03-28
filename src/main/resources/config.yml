@@ -1,0 +1,2 @@
+# Custom message for when a player does not have permission to ride a mob
+no-permission-ride: "&cYou do not have permission to ride this mob"
