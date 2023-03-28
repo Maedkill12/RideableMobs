@@ -7,6 +7,7 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import net.maed12.rideablemobs.util.Util;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
@@ -29,15 +30,18 @@ public class PacketListener {
             public void onPacketReceiving(PacketEvent event) {
                 Player player = event.getPlayer();
                 Entity vehicle = player.getVehicle();
-                if (vehicle instanceof Vehicle || vehicle == null) {
+                if (vehicle == null || vehicle instanceof Vehicle) {
                     return;
                 }
                 PacketContainer packet = event.getPacket();
                 float sideways = packet.getFloat().read(0);
                 float forward = packet.getFloat().read(1);
                 boolean jump = packet.getBooleans().read(0);
-                float yaw = player.getLocation().getYaw();
-                float pitch = player.getLocation().getPitch();
+
+                Location playerLocation = player.getLocation();
+
+                float yaw = playerLocation.getYaw();
+                float pitch = playerLocation.getPitch();
 
                 vehicle.setRotation(yaw, pitch);
 
@@ -45,7 +49,7 @@ public class PacketListener {
                 double x = -forward * Math.sin(radians) + sideways * Math.cos(radians);
                 double z = forward * Math.cos(radians) + sideways * Math.sin(radians);
 
-                Vector velocity = new Vector(x, vehicle.getVelocity().getY(), z).normalize().multiply(0.5);
+                Vector velocity = new Vector(x, 0, z).normalize().multiply(0.5);
 
                 velocity.setY(vehicle.getVelocity().getY());
 
@@ -66,8 +70,11 @@ public class PacketListener {
                         velocity.setY(0.5);
                     }
                 }
-                if (Double.isFinite(velocity.getX()) && Double.isFinite(velocity.getY()) && Double.isFinite(velocity.getX())) {
+                try {
+                    velocity.checkFinite();
                     vehicle.setVelocity(velocity);
+                } catch (Exception ignored) {
+
                 }
             }
         });

@@ -1,25 +1,21 @@
 package net.maed12.rideablemobs.util;
 
 
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Flying;
+import org.bukkit.entity.WaterMob;
 
 public class Util {
     public static boolean canSwim(Entity entity) {
-        return entity instanceof WaterMob ||
-                entity instanceof Drowned ||
-                entity instanceof Guardian ||
-                entity instanceof Turtle ||
-                entity instanceof Axolotl;
+        return switch (entity.getType()) {
+            case DROWNED, GUARDIAN, TURTLE, AXOLOTL -> true;
+            default -> entity instanceof WaterMob;
+        };
     }
     public static boolean canFly(Entity entity) {
-        return entity instanceof Flying ||
-                entity instanceof Allay ||
-                entity instanceof Bat ||
-                entity instanceof Bee ||
-                entity instanceof Blaze ||
-                entity instanceof EnderDragon ||
-                entity instanceof Parrot ||
-                entity instanceof Vex ||
-                entity instanceof Wither;
+        return switch (entity.getType()) {
+            case ALLAY, BAT, BEE, BLAZE, ENDER_DRAGON, PARROT, VEX, WITHER -> true;
+            default -> entity instanceof Flying;
+        };
     }
 }

@@ -42,9 +42,10 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onDismount(EntityDismountEvent e) {
         Entity entity = e.getEntity();
-        if (!(entity instanceof Player player)) {
+        if (!(entity instanceof Player)) {
             return;
         }
+        Player player = (Player) e.getEntity();
         Entity vehicle = e.getDismounted();
         if (Util.canSwim(vehicle) && vehicle.isInWater() && !player.isSneaking()) {
             e.setCancelled(true);
