@@ -1,5 +1,6 @@
 package net.maed12.rideablemobs.util;
 
+
 import org.bukkit.entity.*;
 
 public class Util {
@@ -7,7 +8,8 @@ public class Util {
         return entity instanceof WaterMob ||
                 entity instanceof Drowned ||
                 entity instanceof Guardian ||
-                entity instanceof Turtle;
+                entity instanceof Turtle ||
+                entity instanceof Axolotl;
     }
     public static boolean canFly(Entity entity) {
         return entity instanceof Flying ||
