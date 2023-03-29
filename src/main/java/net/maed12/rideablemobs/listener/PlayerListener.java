@@ -28,7 +28,13 @@ public class PlayerListener implements Listener {
         if (entity.getPassengers().size() >= 1 || entity instanceof EnderDragon || (entity instanceof Vehicle && !(entity instanceof ZombieHorse || entity instanceof SkeletonHorse))) {
             return;
         }
+        EntityType type = entity.getType();
+        boolean isEnabled = plugin.getConfig().getBoolean(type.name().toLowerCase());
         Player player = e.getPlayer();
+        if (!isEnabled) {
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(plugin.getConfig().getString("entity-disabled"))));
+            return;
+        }
         if (!player.hasPermission("rideablemobs.ride." + entity.getType().name().toLowerCase())) {
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(plugin.getConfig().getString("no-permission-ride"))));
             return;

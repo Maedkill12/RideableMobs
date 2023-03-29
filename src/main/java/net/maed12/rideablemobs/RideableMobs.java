@@ -9,7 +9,7 @@ public final class RideableMobs extends JavaPlugin {
     @Override
     public void onEnable() {
         getConfig().options().copyDefaults(true);
-        saveDefaultConfig();
+        saveConfig();
 
         PacketListener.onEnable(this);
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
