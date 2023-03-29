@@ -2,10 +2,7 @@ package net.maed12.rideablemobs.listener;
 
 import net.maed12.rideablemobs.util.Util;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.EnderDragon;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Vehicle;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
@@ -28,11 +25,11 @@ public class PlayerListener implements Listener {
             return;
         }
         Entity entity = e.getRightClicked();
-        if (entity instanceof Vehicle || entity.getPassengers().size() >= 1 || entity instanceof EnderDragon) {
+        if (entity.getPassengers().size() >= 1 || entity instanceof EnderDragon || (entity instanceof Vehicle && !(entity instanceof ZombieHorse || entity instanceof SkeletonHorse))) {
             return;
         }
         Player player = e.getPlayer();
-        if (!player.hasPermission("rideablemobs.ride." + entity.getName().toLowerCase())) {
+        if (!player.hasPermission("rideablemobs.ride." + entity.getType().name().toLowerCase())) {
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(plugin.getConfig().getString("no-permission-ride"))));
             return;
         }
