@@ -10,6 +10,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.StringUtil;
 
 import java.util.*;
 
@@ -28,68 +29,52 @@ public class RideableMobsCommand implements CommandExecutor, TabCompleter {
             sender.sendMessage(ChatColor.RED + "You do not have permission to use this command.");
             return false;
         }
-        if (args.length == 0) {
+        if (args.length < 1) {
             sender.sendMessage(ChatColor.RED + "Invalid usage. Use /rideablemobs <command>.");
             return false;
         }
         if ("permission".equals(args[0])) {
-            if (args[1] == null) {
+            if (args.length < 4) {
+                sender.sendMessage(ChatColor.RED + "Invalid usage. Use /rideablemobs permission <player> <entity_type> <true/false>.");
                 return false;
             }
             Player player = Bukkit.getPlayer(args[1]);
             if (player == null) {
+                sender.sendMessage(ChatColor.RED + "Player not found.");
                 return false;
             }
-            if (args[2] == null) {
+            EnumSet<EntityType> validEntityTypes = EnumSet.allOf(EntityType.class);
+            if (!validEntityTypes.contains(EntityType.valueOf(args[2].toUpperCase()))) {
+                sender.sendMessage(ChatColor.RED + "Invalid entity type.");
                 return false;
             }
             EntityType entityType = EntityType.valueOf(args[2].toUpperCase());
-            if (!entityType.isAlive()) {
-                return false;
+            boolean value = Boolean.parseBoolean(args[3]);
+            PermissionAttachment attachment = permissions.getOrDefault(player.getUniqueId(), player.addAttachment(plugin));
+            attachment.setPermission("rideablemobs.ride." + args[2].toLowerCase(), value);
+            permissions.put(player.getUniqueId(), attachment);
+            sender.sendMessage(ChatColor.GREEN + "Permission " + (value ? "set" : "removed") + " successfully.");
+
+            Optional<String> message = Optional.ofNullable(plugin.getConfig().getString(value ? "granted-permission" : "revoked-permission"));
+            if (message.isPresent()) {
+                message = message.map(m -> m.replaceAll("%entity_type%", entityType.name()));
+                player.sendMessage(ChatColor.translateAlternateColorCodes('&', message.get()));
             }
-            if (args[3] == null) {
-                return false;
-            }
-            boolean hasPermission = Boolean.parseBoolean(args[3]);
-            PermissionAttachment attachment;
-            if (!permissions.containsKey(player.getUniqueId())) {
-                attachment = player.addAttachment(plugin);
-                permissions.put(player.getUniqueId(), attachment);
-            } else {
-                attachment = permissions.get(player.getUniqueId());
-            }
-            if (hasPermission) {
-                attachment.setPermission("rideablemobs.ride." + entityType.name().toLowerCase(), true);
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(Objects.requireNonNull(plugin.getConfig().getString("granted-permission")).replaceAll("%entity_type%", entityType.name()))));
-            } else {
-                attachment.unsetPermission("rideablemobs.ride." + entityType.name().toLowerCase());
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(Objects.requireNonNull(plugin.getConfig().getString("revoked-permission")).replaceAll("%entity_type%", entityType.name()))));
-            }
-        } else {
-            sender.sendMessage(ChatColor.RED + "Invalid command.");
+            return true;
         }
-        return true;
+        sender.sendMessage(ChatColor.RED + "Invalid command.");
+        return false;
     }
+  
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        List<String> results = new ArrayList<>();
-        if (args.length == 1) {
-            results.add("permission");
-        } else if (args.length == 2) {
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                results.add(player.getName());
-            }
-        } else if (args.length == 3) {
-            for (EntityType entityType : EntityType.values()) {
-                if (entityType.isAlive()) {
-                    results.add(entityType.name().toLowerCase());
-                }
-            }
-        } else if (args.length == 4) {
-            results.add("true");
-            results.add("false");
-        }
-        return results;
+        return switch (args.length) {
+            case 1 -> StringUtil.copyPartialMatches(args[0], List.of("permission"), new ArrayList<>());
+            case 2 -> StringUtil.copyPartialMatches(args[1], Bukkit.getOnlinePlayers().stream().map(Player::getName).toList(), new ArrayList<>());
+            case 3 -> StringUtil.copyPartialMatches(args[2], Arrays.stream(EntityType.values()).filter(EntityType::isAlive).map(entityType -> entityType.name().toLowerCase()).toList(), new ArrayList<>());
+            case 4 -> StringUtil.copyPartialMatches(args[3], List.of("true", "false"), new ArrayList<>());
+            default -> null;
+        };
     }
 }

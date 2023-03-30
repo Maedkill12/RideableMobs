@@ -11,7 +11,7 @@ revoked-permission: "&cYou no longer have permission to ride %entity_type%"
 entity-disabled: "&cThis entity is disabled and you can't ride them"
 
 # Setting to establish that the primary hand must be empty in order to ride the entity.
-requires-empty-hand: false
+requires-empty-hand: true
 
 # Entities:
 allay: true

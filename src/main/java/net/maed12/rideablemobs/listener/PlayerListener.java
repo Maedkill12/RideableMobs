@@ -39,11 +39,13 @@ public class PlayerListener implements Listener {
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(plugin.getConfig().getString("no-permission-ride"))));
             return;
         }
-        if (entity instanceof ArmorStand) {
-            if (player.isSneaking()) {
-                entity.addPassenger(player);
-            }
-        } else {
+        boolean shouldBeEmptyHand = plugin.getConfig().getBoolean("requires-empty-hand");
+        if (shouldBeEmptyHand && !player.getInventory().getItemInMainHand().getType().isAir()) {
+            return;
+        }
+        if (entity instanceof ArmorStand && player.isSneaking()) {
+            entity.addPassenger(player);
+        } else if (!(entity instanceof ArmorStand)) {
             entity.addPassenger(player);
         }
     }

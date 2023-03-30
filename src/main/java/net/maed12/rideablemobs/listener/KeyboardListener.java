@@ -54,11 +54,7 @@ public class KeyboardListener extends PacketAdapter {
         }
 
         if (jump) {
-            if (Util.canFly(vehicle)) {
-                velocity.setY(0.5);
-            } else if (Util.canSwim(vehicle) && vehicle.isInWater()) {
-                velocity.setY(0.5);
-            } else if (vehicle.isOnGround()) {
+            if (Util.canFly(vehicle) || (Util.canSwim(vehicle) && vehicle.isInWater()) || vehicle.isOnGround()) {
                 velocity.setY(0.5);
             }
         }
