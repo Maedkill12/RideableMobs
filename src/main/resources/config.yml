@@ -1,11 +1,18 @@
 # Custom message for when a player does not have permission to ride an entity
 no-permission-ride: "&cYou do not have permission to ride this mob"
+
 # Custom message for when a player is granted permission to ride an entity
 granted-permission: "&aYou are now granted permission to ride %entity_type%"
+
 # Custom message for when a player's permission to ride an entity is revoked/removed
 revoked-permission: "&cYou no longer have permission to ride %entity_type%"
+
 # Custom message for when an entity is disabled
 entity-disabled: "&cThis entity is disabled and you can't ride them"
+
+# Setting to establish that the primary hand must be empty in order to ride the entity.
+requires-empty-hand: false
+
 # Entities:
 allay: true
 armor_stand: true
@@ -43,7 +50,6 @@ ocelot: true
 panda: true
 parrot: true
 phantom: true
-pig: true
 piglin: true
 piglin_brute: true
 pillager: true
@@ -63,7 +69,6 @@ snow_golem: true
 spider: true
 squid: true
 stray: true
-strider: true
 tadpole: true
 tropical_fish: true
 turtle: true
