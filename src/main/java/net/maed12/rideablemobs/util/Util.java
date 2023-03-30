@@ -5,7 +5,12 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Flying;
 import org.bukkit.entity.WaterMob;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+
 public class Util {
+
     public static boolean canSwim(Entity entity) {
         return switch (entity.getType()) {
             case DROWNED, GUARDIAN, TURTLE, AXOLOTL -> true;

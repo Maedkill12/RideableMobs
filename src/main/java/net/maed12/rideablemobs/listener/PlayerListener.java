@@ -6,6 +6,8 @@ import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spigotmc.event.entity.EntityDismountEvent;
@@ -20,7 +22,7 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerInteract(PlayerInteractAtEntityEvent e) {
+    public void onInteractAtEntity(PlayerInteractAtEntityEvent e) {
         if (!e.getHand().equals(EquipmentSlot.HAND)) {
             return;
         }
@@ -43,7 +45,7 @@ public class PlayerListener implements Listener {
         if (shouldBeEmptyHand && !player.getInventory().getItemInMainHand().getType().isAir()) {
             return;
         }
-        if (entity instanceof ArmorStand && player.isSneaking()) {
+        if (entity instanceof ArmorStand && !player.isSneaking()) {
             entity.addPassenger(player);
         } else if (!(entity instanceof ArmorStand)) {
             entity.addPassenger(player);

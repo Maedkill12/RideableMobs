@@ -16,7 +16,8 @@ import java.util.*;
 
 public class RideableMobsCommand implements CommandExecutor, TabCompleter {
     private JavaPlugin plugin;
-    private HashMap<UUID, PermissionAttachment> permissions;
+    private static HashMap<UUID, PermissionAttachment> permissions;
+    private static List<String> availableCommands;
 
     public RideableMobsCommand(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -70,11 +71,19 @@ public class RideableMobsCommand implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         return switch (args.length) {
-            case 1 -> StringUtil.copyPartialMatches(args[0], List.of("permission"), new ArrayList<>());
+            case 1 -> StringUtil.copyPartialMatches(args[0], availableCommands, new ArrayList<>());
             case 2 -> StringUtil.copyPartialMatches(args[1], Bukkit.getOnlinePlayers().stream().map(Player::getName).toList(), new ArrayList<>());
             case 3 -> StringUtil.copyPartialMatches(args[2], Arrays.stream(EntityType.values()).filter(EntityType::isAlive).map(entityType -> entityType.name().toLowerCase()).toList(), new ArrayList<>());
             case 4 -> StringUtil.copyPartialMatches(args[3], List.of("true", "false"), new ArrayList<>());
             default -> null;
+        };
+    }
+
+    static {
+        availableCommands = new ArrayList<>() {
+            {
+                this.add("permission");
+            }
         };
     }
 }
