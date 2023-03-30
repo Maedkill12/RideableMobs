@@ -39,7 +39,13 @@ public class PlayerListener implements Listener {
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(plugin.getConfig().getString("no-permission-ride"))));
             return;
         }
-        entity.addPassenger(player);
+        if (entity instanceof ArmorStand) {
+            if (player.isSneaking()) {
+                entity.addPassenger(player);
+            }
+        } else {
+            entity.addPassenger(player);
+        }
     }
 
     @EventHandler

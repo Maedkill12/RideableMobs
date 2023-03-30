@@ -5,3 +5,11 @@ api-version: 1.19
 depend: [ ProtocolLib ]
 authors: [ Maed_12 ]
 description: RideableMobs is a fun and easy plugin that lets you ride any mob in minecraft and control it with your keyboard. You can fly with some mobs, and even ride other players. Just right-click on the mob or player you want to ride and enjoy the ride. RideableMobs is compatible with most versions of minecraft and requires permissions to use.
+commands:
+  rideablemobs:
+    description: Commands of the RideableMobs plugin.
+    aliases:
+      - rm
+    usage: /rideablemobs <command>
+    permission: "rideablemobs.commands"
+    permission-message: "You do not have permission to use this command"

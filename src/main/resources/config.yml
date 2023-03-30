@@ -1,9 +1,14 @@
 # Custom message for when a player does not have permission to ride an entity
 no-permission-ride: "&cYou do not have permission to ride this mob"
+# Custom message for when a player is granted permission to ride an entity
+granted-permission: "&aYou are now granted permission to ride %entity_type%"
+# Custom message for when a player's permission to ride an entity is revoked/removed
+revoked-permission: "&cYou no longer have permission to ride %entity_type%"
 # Custom message for when an entity is disabled
 entity-disabled: "&cThis entity is disabled and you can't ride them"
 # Entities:
 allay: true
+armor_stand: true
 axolotl: true
 bat: true
 bee: true
@@ -23,15 +28,17 @@ evoker: true
 fox: true
 frog: true
 ghast: true
+giant: true
 glow_squid: true
 goat: true
 guardian: true
 hoglin: true
 husk: true
+illusioner: true
 iron_golem: true
 llama: true
 magma_cube: true
-mooshroom: true
+mushroom_cow: true
 ocelot: true
 panda: true
 parrot: true
