@@ -7,6 +7,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import net.maed12.rideablemobs.util.Util;
 import org.bukkit.Location;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
@@ -21,6 +22,9 @@ public class KeyboardListener extends PacketAdapter {
     @Override
     public void onPacketReceiving(PacketEvent event) {
         Player player = event.getPlayer();
+        if (!Util.isWorldEnabled(player)) {
+            return;
+        }
         Entity vehicle = player.getVehicle();
         if (vehicle == null || vehicle instanceof Vehicle) {
             return;
@@ -29,6 +33,11 @@ public class KeyboardListener extends PacketAdapter {
         float sideways = packet.getFloat().read(0);
         float forward = packet.getFloat().read(1);
         boolean jump = packet.getBooleans().read(0);
+        boolean unmount = packet.getBooleans().read(1);
+
+        if (unmount) {
+            return;
+        }
 
         Location playerLocation = player.getLocation();
 
@@ -45,6 +54,13 @@ public class KeyboardListener extends PacketAdapter {
 
         velocity.setY(vehicle.getVelocity().getY());
 
+        if (!Double.isFinite(velocity.getX())) {
+            velocity.setX(0);
+        }
+        if (!Double.isFinite(velocity.getZ())) {
+            velocity.setZ(0);
+        }
+
         if (vehicle.isInWater() && !Util.canSwim(vehicle) && !vehicle.isOnGround()) {
             velocity.setY(-0.08);
         }
@@ -58,9 +74,14 @@ public class KeyboardListener extends PacketAdapter {
                 velocity.setY(0.5);
             }
         }
+
         try {
             velocity.checkFinite();
+            if (vehicle instanceof EnderDragon enderDragon) {
+                enderDragon.setRotation(yaw + 180, pitch);
+            }
             vehicle.setVelocity(velocity);
+
         } catch (Exception ignored) {
 
         }

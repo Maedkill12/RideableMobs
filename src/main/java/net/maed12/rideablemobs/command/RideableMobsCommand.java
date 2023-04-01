@@ -1,5 +1,6 @@
 package net.maed12.rideablemobs.command;
 
+import net.maed12.rideablemobs.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -44,23 +45,29 @@ public class RideableMobsCommand implements CommandExecutor, TabCompleter {
                 sender.sendMessage(ChatColor.RED + "Player not found.");
                 return false;
             }
-            EnumSet<EntityType> validEntityTypes = EnumSet.allOf(EntityType.class);
-            if (!validEntityTypes.contains(EntityType.valueOf(args[2].toUpperCase()))) {
+            EntityType entityType;
+            try {
+                entityType = EntityType.valueOf(args[2].toUpperCase());
+            } catch (IllegalArgumentException e) {
                 sender.sendMessage(ChatColor.RED + "Invalid entity type.");
                 return false;
             }
-            EntityType entityType = EntityType.valueOf(args[2].toUpperCase());
-            boolean value = Boolean.parseBoolean(args[3]);
-            PermissionAttachment attachment = permissions.getOrDefault(player.getUniqueId(), player.addAttachment(plugin));
-            attachment.setPermission("rideablemobs.ride." + args[2].toLowerCase(), value);
-            permissions.put(player.getUniqueId(), attachment);
+            boolean value;
+            try {
+                value = Boolean.parseBoolean(args[3]);
+            } catch (IllegalArgumentException e) {
+                sender.sendMessage(ChatColor.RED + "Invalid value. Use true or false.");
+                return false;
+            }
+            PermissionAttachment attachment = permissions.computeIfAbsent(player.getUniqueId(), playerUUID -> player.addAttachment(plugin));
+            attachment.setPermission("rideablemobs.ride." + entityType.name().toLowerCase(), value);
             sender.sendMessage(ChatColor.GREEN + "Permission " + (value ? "set" : "removed") + " successfully.");
 
-            Optional<String> message = Optional.ofNullable(plugin.getConfig().getString(value ? "granted-permission" : "revoked-permission"));
-            if (message.isPresent()) {
-                message = message.map(m -> m.replaceAll("%entity_type%", entityType.name()));
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&', message.get()));
-            }
+            Optional<String> message = Optional.of(ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(plugin.getConfig().getString(value ? "granted-permission" : "revoked-permission"))));
+            message.map(m -> m.replaceAll("%entity_type%", entityType.name())).ifPresent(player::sendMessage);
+            return true;
+        } else if ("reload".equals(args[0])) {
+            Util.onReload(sender);
             return true;
         }
         sender.sendMessage(ChatColor.RED + "Invalid command.");
@@ -83,6 +90,7 @@ public class RideableMobsCommand implements CommandExecutor, TabCompleter {
         availableCommands = new ArrayList<>() {
             {
                 this.add("permission");
+                this.add("reload");
             }
         };
     }
